@@ -1,0 +1,164 @@
+---
+const personality = [
+  'Confiable sin ser rígida',
+  'Funcional sin ser fría',
+  'Bonita sin ser cursi',
+  'Cercana y cotidiana',
+  'Sincera y empática',
+  'Moderna y cool',
+  'Alegre y sencilla',
+];
+---
+
+<section class="philo section" id="nosotros">
+  <div class="philo__deco" aria-hidden="true"></div>
+
+  <div class="container philo__inner">
+
+    <div class="philo__text">
+      <span class="philo__eyebrow">Nuestra filosofía</span>
+      <h2 class="philo__title">
+        Sosteniendo<br />y suavizando
+      </h2>
+      <p class="philo__body">
+        Sabemos que en el proceso de la maternidad no todo necesita ser resuelto,
+        pero sí ser sostenido.
+      </p>
+      <p class="philo__body">
+        Así, en medio del caos, la suavidad toma forma: imperfecta, flexible y presente.
+        En Nalma, transformamos el caos en algo más llevadero.
+      </p>
+      <div class="philo__blob" aria-hidden="true"></div>
+    </div>
+
+    <div class="philo__personality">
+      <span class="philo__pers-label">Somos</span>
+      <ul class="philo__pers-list">
+        {personality.map(trait => (
+          <li class="philo__pers-item">
+            <span class="philo__dot" aria-hidden="true"></span>
+            {trait}
+          </li>
+        ))}
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .philo {
+    background: var(--oliva);
+    color: var(--crema);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .philo__deco {
+    position: absolute;
+    bottom: -100px;
+    left: -80px;
+    width: 480px;
+    height: 480px;
+    border-radius: 72% 28% 56% 44% / 44% 62% 38% 56%;
+    background: rgba(157, 184, 154, 0.08);
+    pointer-events: none;
+  }
+
+  .philo__inner {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: var(--sp-16);
+    align-items: start;
+    position: relative;
+    z-index: 1;
+  }
+
+  .philo__eyebrow {
+    display: block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--amarillo);
+    opacity: 0.8;
+    margin-bottom: var(--sp-4);
+  }
+
+  .philo__title {
+    font-family: var(--font-heading);
+    font-weight: 500;
+    font-size: var(--text-5xl);
+    color: var(--crema);
+    line-height: 1.1;
+    margin-bottom: var(--sp-8);
+  }
+
+  .philo__body {
+    font-size: var(--text-lg);
+    color: var(--crema);
+    opacity: 0.7;
+    line-height: 1.7;
+    margin-bottom: var(--sp-5);
+    max-width: 500px;
+  }
+
+  .philo__blob {
+    width: 200px;
+    height: 200px;
+    margin-top: var(--sp-8);
+    border-radius: 62% 38% 46% 54% / 60% 44% 56% 40%;
+    background: radial-gradient(
+      circle at 40% 35%,
+      rgba(252, 220, 215, 0.45) 0%,
+      rgba(242, 197, 192, 0.15) 60%,
+      transparent 80%
+    );
+  }
+
+  /* Personality list */
+  .philo__personality { padding-top: var(--sp-6); }
+
+  .philo__pers-label {
+    display: block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--crema);
+    opacity: 0.35;
+    margin-bottom: var(--sp-6);
+  }
+
+  .philo__pers-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .philo__pers-item {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    font-family: var(--font-heading);
+    font-size: var(--text-xl);
+    color: var(--crema);
+    padding: var(--sp-4) 0;
+    border-bottom: 1px solid rgba(245, 240, 230, 0.1);
+  }
+
+  .philo__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--amarillo);
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 900px) {
+    .philo__inner {
+      grid-template-columns: 1fr;
+    }
+    .philo__title  { font-size: var(--text-4xl); }
+    .philo__blob   { display: none; }
+  }
+</style>

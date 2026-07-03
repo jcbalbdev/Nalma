@@ -1,0 +1,202 @@
+---
+import Button from '../ui/Button.astro';
+---
+
+<section class="hero">
+  <div class="hero__bg-blob" aria-hidden="true"></div>
+
+  <div class="container hero__inner">
+
+    <div class="hero__content">
+      <p class="hero__eyebrow">Cuidado que calma</p>
+
+      <h1 class="hero__title">
+        Para los días<br />
+        <em>perfectos</em> y los<br />
+        que no lo son.
+      </h1>
+
+      <p class="hero__subtitle">
+        Productos que te acompañan a ti y tu bebé<br />
+        en momentos que llenan tu día.
+      </p>
+
+      <Button href="#todo" variant="outline" size="lg">
+        Conócenos
+      </Button>
+    </div>
+
+    <div class="hero__visual" aria-hidden="true">
+      <div class="hero__glow"></div>
+      <div class="hero__frame">
+        <div class="hero__frame-inner"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="hero__tagline-strip">
+    <span>Para bebé</span>
+    <span aria-hidden="true">·</span>
+    <span>Para mamá</span>
+    <span aria-hidden="true">·</span>
+    <span>En las buenas y en las peores</span>
+    <span aria-hidden="true">·</span>
+    <span>Cuidado que calma</span>
+    <span aria-hidden="true">·</span>
+    <span>Nalma.pe</span>
+    <span aria-hidden="true">·</span>
+    <span>Lima, Perú</span>
+    <span aria-hidden="true">·</span>
+  </div>
+</section>
+
+<style>
+  .hero {
+    background: var(--oliva);
+    min-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero__bg-blob {
+    position: absolute;
+    top: -80px;
+    right: -80px;
+    width: 520px;
+    height: 520px;
+    border-radius: 62% 38% 46% 54% / 60% 44% 56% 40%;
+    background: rgba(157, 184, 154, 0.12);
+    pointer-events: none;
+  }
+
+  .hero__inner {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-16);
+    align-items: center;
+    padding-top: var(--sp-20);
+    padding-bottom: var(--sp-20);
+  }
+
+  /* Content */
+  .hero__eyebrow {
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: var(--text-lg);
+    color: var(--amarillo);
+    opacity: 0.9;
+    margin-bottom: var(--sp-4);
+  }
+
+  .hero__title {
+    font-family: var(--font-heading);
+    font-weight: 500;
+    font-size: clamp(2.5rem, 5vw, 5rem);
+    color: var(--crema);
+    line-height: 1.12;
+    margin-bottom: var(--sp-6);
+  }
+
+  .hero__title em {
+    font-style: italic;
+    color: var(--amarillo);
+  }
+
+  .hero__subtitle {
+    font-size: var(--text-lg);
+    color: var(--crema);
+    opacity: 0.7;
+    line-height: 1.65;
+    margin-bottom: var(--sp-10);
+  }
+
+  /* Override Button for dark bg */
+  .hero :global(.btn--outline) {
+    border-color: var(--crema);
+    color: var(--crema);
+  }
+  .hero :global(.btn--outline:hover) {
+    background: var(--crema);
+    color: var(--oliva);
+  }
+
+  /* Visual */
+  .hero__visual {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero__glow {
+    position: absolute;
+    width: 380px;
+    height: 380px;
+    border-radius: 62% 38% 46% 54% / 60% 44% 56% 40%;
+    background: radial-gradient(circle at 40% 35%, #FAFBA8 0%, var(--amarillo) 50%, transparent 72%);
+    opacity: 0.28;
+    transform: translate(-15%, 10%);
+  }
+
+  .hero__frame {
+    position: relative;
+    z-index: 1;
+    width: 420px;
+    height: 480px;
+    border-radius: 44% 56% 40% 60% / 68% 32% 68% 32%;
+    overflow: hidden;
+    border: 1.5px solid rgba(245, 240, 230, 0.12);
+  }
+
+  .hero__frame-inner {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      145deg,
+      rgba(157, 184, 154, 0.35) 0%,
+      rgba(93, 94, 60, 0.5) 100%
+    );
+  }
+
+  /* Tagline strip */
+  .hero__tagline-strip {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-6);
+    padding: var(--sp-4) var(--sp-8);
+    background: rgba(245, 240, 230, 0.06);
+    border-top: 1px solid rgba(245, 240, 230, 0.1);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--crema);
+    opacity: 0.45;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none;
+  }
+
+  .hero__tagline-strip::-webkit-scrollbar { display: none; }
+
+  @media (max-width: 900px) {
+    .hero__inner {
+      grid-template-columns: 1fr;
+      text-align: center;
+      padding-top: var(--sp-16);
+      padding-bottom: var(--sp-16);
+    }
+    .hero__visual { order: -1; }
+    .hero__frame {
+      width: 280px;
+      height: 320px;
+    }
+    .hero__glow {
+      width: 260px;
+      height: 260px;
+    }
+  }
+</style>

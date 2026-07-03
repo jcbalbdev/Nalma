@@ -1,0 +1,139 @@
+---
+const navLinks = [
+  { href: '#bebe',     label: 'Para bebé' },
+  { href: '#mama',     label: 'Para mamá' },
+  { href: '#todo',     label: 'Todo' },
+  { href: '#nosotros', label: 'Nosotros' },
+];
+---
+
+<header class="header">
+  <div class="container header__inner">
+
+    <a href="/" class="header__logo" aria-label="Nalma — Inicio">
+      NALMA
+    </a>
+
+    <nav class="header__nav" aria-label="Navegación principal">
+      <ul class="header__list">
+        {navLinks.map(link => (
+          <li>
+            <a href={link.href} class="header__link">{link.label}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="header__actions">
+      <button class="header__icon-btn" aria-label="Buscar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="1.8"
+             stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="M21 21l-4.35-4.35"/>
+        </svg>
+      </button>
+
+      <button class="header__menu-btn" aria-label="Abrir menú" aria-expanded="false">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <line x1="4" y1="6"  x2="20" y2="6"/>
+          <line x1="4" y1="12" x2="20" y2="12"/>
+          <line x1="4" y1="18" x2="20" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+  </div>
+</header>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(245, 240, 230, 0.92);
+    border-bottom: 1px solid var(--crema-oscura);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .header__inner {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-8);
+    padding-top: var(--sp-4);
+    padding-bottom: var(--sp-4);
+  }
+
+  .header__logo {
+    font-family: var(--font-logo);
+    font-weight: 900;
+    font-size: var(--text-2xl);
+    color: var(--oliva);
+    letter-spacing: 0.02em;
+    flex-shrink: 0;
+  }
+
+  .header__nav { flex: 1; }
+
+  .header__list {
+    display: flex;
+    gap: var(--sp-6);
+  }
+
+  .header__link {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--oliva);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding-bottom: var(--sp-1);
+    border-bottom: 2px solid transparent;
+    transition: border-color var(--ease), color var(--ease);
+  }
+
+  .header__link:hover {
+    color: var(--negro);
+    border-bottom-color: var(--oliva);
+  }
+
+  .header__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    flex-shrink: 0;
+  }
+
+  .header__icon-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    color: var(--oliva);
+    transition: background var(--ease);
+  }
+
+  .header__icon-btn:hover { background: var(--crema-oscura); }
+
+  .header__menu-btn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    color: var(--oliva);
+    transition: background var(--ease);
+  }
+
+  .header__menu-btn:hover { background: var(--crema-oscura); }
+
+  @media (max-width: 768px) {
+    .header__nav    { display: none; }
+    .header__menu-btn { display: flex; }
+  }
+</style>

@@ -1,0 +1,217 @@
+---
+import Badge from '../ui/Badge.astro';
+import { products } from '../../data/products';
+
+const bebe = products.filter(p => p.category === 'bebe');
+const mama = products.filter(p => p.category === 'mama');
+---
+
+<section class="cats" id="bebe">
+
+  <!-- Para Bebé -->
+  <div class="cat cat--bebe">
+    <div class="container cat__inner">
+
+      <div class="cat__content">
+        <Badge category="bebe" size="md" />
+        <h2 class="cat__title">Para tu<br /><em>bebé</em></h2>
+        <p class="cat__desc">
+          Formulados especialmente para la piel más sensible.
+          Suaves, efectivos y seguros desde el primer día.
+        </p>
+        <ul class="cat__list">
+          {bebe.map(p => (
+            <li class="cat__item">
+              <span class="cat__num">{p.num}</span>
+              <div>
+                <span class="cat__name">{p.name}</span>
+                <span class="cat__sub">{p.description} · {p.size}</span>
+              </div>
+            </li>
+          ))}
+        </ul>
+        <a href="#todo" class="cat__link">Ver productos para bebé →</a>
+      </div>
+
+      <div class="cat__visual" aria-hidden="true">
+        <div class="cat__blob cat__blob--egg"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Para Mamá -->
+  <div class="cat cat--mama" id="mama">
+    <div class="container cat__inner cat__inner--flip">
+
+      <div class="cat__visual" aria-hidden="true">
+        <div class="cat__blob cat__blob--wide"></div>
+      </div>
+
+      <div class="cat__content">
+        <Badge category="mama" size="md" />
+        <h2 class="cat__title">Para<br /><em>mamá</em></h2>
+        <p class="cat__desc">
+          Pensados para cada etapa: embarazo, post parto y lactancia.
+          Contigo en cada momento que importa.
+        </p>
+        <ul class="cat__list">
+          {mama.map(p => (
+            <li class="cat__item">
+              <span class="cat__num">{p.num}</span>
+              <div>
+                <span class="cat__name">{p.name}</span>
+                <span class="cat__sub">
+                  {p.description} · {p.size}
+                  {p.subcategory && <em class="cat__stage">{p.subcategory}</em>}
+                </span>
+              </div>
+            </li>
+          ))}
+        </ul>
+        <a href="#todo" class="cat__link">Ver productos para mamá →</a>
+      </div>
+
+    </div>
+  </div>
+
+</section>
+
+<style>
+  .cat { padding: var(--sp-24) 0; }
+
+  .cat--bebe { background: var(--amarillo-claro); }
+  .cat--mama { background: var(--rosa-claro); }
+
+  .cat__inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-16);
+    align-items: center;
+  }
+
+  .cat__inner--flip .cat__content { order: 2; }
+  .cat__inner--flip .cat__visual  { order: 1; }
+
+  .cat__content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-5);
+  }
+
+  .cat__title {
+    font-family: var(--font-heading);
+    font-weight: 500;
+    font-size: var(--text-5xl);
+    color: var(--oliva);
+    line-height: 1.1;
+  }
+  .cat__title em { font-style: italic; }
+
+  .cat__desc {
+    font-size: var(--text-lg);
+    color: var(--oliva-medio);
+    line-height: 1.65;
+    max-width: 420px;
+  }
+
+  .cat__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
+    border-top: 1px solid rgba(93, 94, 60, 0.18);
+    padding-top: var(--sp-5);
+  }
+
+  .cat__item {
+    display: flex;
+    gap: var(--sp-4);
+    align-items: flex-start;
+  }
+
+  .cat__num {
+    font-size: var(--text-xs);
+    font-weight: 700;
+    color: var(--oliva);
+    opacity: 0.35;
+    letter-spacing: 0.06em;
+    min-width: 24px;
+    padding-top: 2px;
+  }
+
+  .cat__name {
+    display: block;
+    font-weight: 500;
+    color: var(--oliva);
+    font-size: var(--text-base);
+  }
+
+  .cat__sub {
+    display: block;
+    font-size: var(--text-sm);
+    color: var(--oliva-medio);
+    opacity: 0.8;
+    margin-top: 2px;
+  }
+
+  .cat__stage {
+    font-style: normal;
+    font-size: var(--text-xs);
+    font-weight: 500;
+    background: rgba(93, 94, 60, 0.12);
+    color: var(--oliva);
+    padding: 2px var(--sp-2);
+    border-radius: var(--radius-full);
+    margin-left: var(--sp-1);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .cat__link {
+    font-weight: 500;
+    color: var(--oliva);
+    border-bottom: 1.5px solid var(--oliva);
+    padding-bottom: var(--sp-1);
+    width: fit-content;
+    transition: opacity var(--ease);
+    font-size: var(--text-sm);
+  }
+  .cat__link:hover { opacity: 0.6; }
+
+  /* Blobs */
+  .cat__visual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .cat__blob {
+    pointer-events: none;
+  }
+
+  .cat--bebe .cat__blob--egg {
+    width: 300px;
+    height: 360px;
+    border-radius: 44% 56% 40% 60% / 68% 32% 68% 32%;
+    background: radial-gradient(circle at 42% 38%, #FAFBA8 0%, var(--amarillo) 60%, transparent 80%);
+  }
+
+  .cat--mama .cat__blob--wide {
+    width: 380px;
+    height: 300px;
+    border-radius: 72% 28% 56% 44% / 44% 62% 38% 56%;
+    background: radial-gradient(circle at 42% 38%, #FDE8E4 0%, var(--rosa) 60%, transparent 80%);
+  }
+
+  @media (max-width: 768px) {
+    .cat { padding: var(--sp-16) 0; }
+    .cat__inner,
+    .cat__inner--flip {
+      grid-template-columns: 1fr;
+    }
+    .cat__inner--flip .cat__content { order: 1; }
+    .cat__inner--flip .cat__visual  { order: 2; }
+    .cat__visual { display: none; }
+    .cat__title { font-size: var(--text-4xl); }
+  }
+</style>

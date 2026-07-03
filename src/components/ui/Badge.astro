@@ -1,0 +1,38 @@
+---
+interface Props {
+  category: 'bebe' | 'mama' | 'todo';
+  subcategory?: string;
+  size?: 'sm' | 'md';
+}
+
+const { category, subcategory, size = 'sm' } = Astro.props;
+
+const labels: Record<string, string> = {
+  bebe: 'Para bebé',
+  mama: 'Para mamá',
+  todo: 'Para todo',
+};
+---
+
+<span class:list={['badge', `badge--${category}`, `badge--${size}`]}>
+  {subcategory ?? labels[category]}
+</span>
+
+<style>
+  .badge {
+    display: inline-block;
+    border-radius: var(--radius-full);
+    font-family: var(--font-body);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .badge--sm { padding: var(--sp-1) var(--sp-3); font-size: var(--text-xs); }
+  .badge--md { padding: var(--sp-2) var(--sp-4); font-size: var(--text-sm); }
+
+  .badge--bebe { background: var(--amarillo);       color: var(--oliva); }
+  .badge--mama { background: var(--rosa);            color: var(--oliva); }
+  .badge--todo { background: var(--verde);           color: var(--crema); }
+</style>

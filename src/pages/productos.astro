@@ -1,0 +1,214 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import ProductCard from '../components/ui/ProductCard.astro';
+import { products } from '../data/products';
+
+const bebe = products.filter(p => p.category === 'bebe');
+const mama = products.filter(p => p.category === 'mama');
+---
+
+<Layout
+  title="Productos — Nalma"
+  description="Todos los productos Nalma para bebé y mamá. Formulados con ciencia y suavidad para acompañarte en cada etapa."
+>
+  <Header />
+
+  <main>
+
+    <!-- Hero de página -->
+    <section class="ph">
+      <div class="container ph__inner">
+        <span class="ph__eyebrow">Nuestros productos</span>
+        <h1 class="ph__title">
+          Cuidado para <em>cada etapa</em>
+        </h1>
+        <p class="ph__sub">
+          Formulados con ingredientes seguros, dermatológicamente probados
+          y aptos durante el embarazo y la lactancia.
+        </p>
+      </div>
+      <div class="ph__blob" aria-hidden="true"></div>
+    </section>
+
+    <!-- Filtros (JS puro, sin framework) -->
+    <div class="filters container" id="filtros">
+      <button class="filter filter--active" data-filter="todos">Todos</button>
+      <button class="filter" data-filter="bebe">Para bebé</button>
+      <button class="filter" data-filter="mama">Para mamá</button>
+    </div>
+
+    <!-- Grid bebé -->
+    <section class="cat-section section" data-category="bebe" id="bebe">
+      <div class="container">
+        <h2 class="cat-section__title">
+          <span class="cat-section__dot cat-section__dot--bebe"></span>
+          Para bebé
+        </h2>
+        <div class="products-grid">
+          {bebe.map(p => <ProductCard product={p} />)}
+        </div>
+      </div>
+    </section>
+
+    <!-- Grid mamá -->
+    <section class="cat-section section" data-category="mama" id="mama">
+      <div class="container">
+        <h2 class="cat-section__title">
+          <span class="cat-section__dot cat-section__dot--mama"></span>
+          Para mamá
+        </h2>
+        <div class="products-grid">
+          {mama.map(p => <ProductCard product={p} />)}
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  /* ── Hero ── */
+  .ph {
+    background: var(--oliva);
+    padding: var(--sp-24) 0 var(--sp-16);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ph__inner {
+    position: relative;
+    z-index: 1;
+    max-width: 640px;
+  }
+
+  .ph__eyebrow {
+    display: block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--amarillo);
+    opacity: 0.8;
+    margin-bottom: var(--sp-4);
+  }
+
+  .ph__title {
+    font-family: var(--font-heading);
+    font-weight: 500;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    color: var(--crema);
+    line-height: 1.1;
+    margin-bottom: var(--sp-6);
+  }
+
+  .ph__title em { font-style: italic; color: var(--amarillo); }
+
+  .ph__sub {
+    font-size: var(--text-lg);
+    color: var(--crema);
+    opacity: 0.65;
+    line-height: 1.7;
+    max-width: 480px;
+  }
+
+  .ph__blob {
+    position: absolute;
+    right: -120px;
+    top: -80px;
+    width: 560px;
+    height: 560px;
+    border-radius: 62% 38% 46% 54% / 60% 44% 56% 40%;
+    background: radial-gradient(
+      circle at 40% 40%,
+      rgba(195, 217, 189, 0.18) 0%,
+      rgba(195, 217, 189, 0.06) 60%,
+      transparent 80%
+    );
+    pointer-events: none;
+  }
+
+  /* ── Filtros ── */
+  .filters {
+    display: flex;
+    gap: var(--sp-3);
+    padding-top: var(--sp-10);
+    padding-bottom: var(--sp-6);
+  }
+
+  .filter {
+    padding: var(--sp-2) var(--sp-6);
+    border-radius: var(--radius-full);
+    border: 1.5px solid var(--crema-oscura);
+    background: transparent;
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--oliva);
+    cursor: pointer;
+    transition: background var(--ease), border-color var(--ease), color var(--ease);
+  }
+
+  .filter:hover,
+  .filter--active {
+    background: var(--oliva);
+    border-color: var(--oliva);
+    color: var(--crema);
+  }
+
+  /* ── Secciones por categoría ── */
+  .cat-section { background: var(--crema); }
+  .cat-section + .cat-section { background: var(--crema-oscura); }
+
+  .cat-section__title {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    font-family: var(--font-heading);
+    font-weight: 500;
+    font-size: var(--text-3xl);
+    color: var(--oliva);
+    margin-bottom: var(--sp-10);
+  }
+
+  .cat-section__dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .cat-section__dot--bebe { background: var(--amarillo); }
+  .cat-section__dot--mama { background: var(--rosa); }
+
+  /* ── Grid ── */
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: var(--sp-6);
+  }
+
+  /* ── Visibilidad filtros (JS) ── */
+  .cat-section--hidden { display: none; }
+</style>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.filter');
+  const sections = document.querySelectorAll<HTMLElement>('.cat-section');
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const filter = btn.dataset.filter;
+
+      buttons.forEach(b => b.classList.remove('filter--active'));
+      btn.classList.add('filter--active');
+
+      sections.forEach(sec => {
+        const show = filter === 'todos' || sec.dataset.category === filter;
+        sec.classList.toggle('cat-section--hidden', !show);
+      });
+    });
+  });
+</script>

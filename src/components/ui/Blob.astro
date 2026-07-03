@@ -1,0 +1,57 @@
+---
+interface Props {
+  color?: 'amarillo' | 'rosa' | 'verde';
+  glow?: boolean;
+  shape?: 'round' | 'egg' | 'wide';
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  class?: string;
+}
+
+const {
+  color = 'amarillo',
+  glow = false,
+  shape = 'round',
+  size = 'md',
+  class: className = '',
+} = Astro.props;
+
+const sizes = { sm: '120px', md: '220px', lg: '320px', xl: '440px' };
+
+const shapes = {
+  round: '62% 38% 46% 54% / 60% 44% 56% 40%',
+  egg:   '44% 56% 40% 60% / 68% 32% 68% 32%',
+  wide:  '72% 28% 56% 44% / 44% 62% 38% 56%',
+};
+
+const solids = {
+  amarillo: 'var(--amarillo)',
+  rosa:     'var(--rosa)',
+  verde:    'var(--verde)',
+};
+
+const glows = {
+  amarillo: 'radial-gradient(circle at 40% 35%, #FAFBA8 0%, var(--amarillo) 55%, transparent 78%)',
+  rosa:     'radial-gradient(circle at 40% 35%, #FDE8E4 0%, var(--rosa) 55%, transparent 78%)',
+  verde:    'radial-gradient(circle at 40% 35%, #D4E8D2 0%, var(--verde) 55%, transparent 78%)',
+};
+
+const s  = sizes[size];
+const br = shapes[shape];
+const bg = glow ? glows[color] : solids[color];
+---
+
+<div
+  class:list={['blob', className]}
+  style={`--b-size:${s};--b-radius:${br};--b-bg:${bg};`}
+  aria-hidden="true"
+/>
+
+<style>
+  .blob {
+    width:  var(--b-size);
+    height: var(--b-size);
+    border-radius: var(--b-radius);
+    background:    var(--b-bg);
+    flex-shrink: 0;
+  }
+</style>

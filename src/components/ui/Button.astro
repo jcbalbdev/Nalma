@@ -1,0 +1,71 @@
+---
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'outline' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
+  class?: string;
+}
+
+const {
+  href,
+  variant = 'primary',
+  size = 'md',
+  class: className = '',
+} = Astro.props;
+
+const Tag = href ? 'a' : 'button';
+---
+
+<Tag
+  href={href}
+  class:list={['btn', `btn--${variant}`, `btn--${size}`, className]}
+>
+  <slot />
+</Tag>
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--sp-2);
+    font-family: var(--font-body);
+    font-weight: 500;
+    border-radius: var(--radius-full);
+    transition: all var(--ease);
+    cursor: pointer;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+  }
+
+  .btn--sm  { padding: var(--sp-2) var(--sp-5); font-size: var(--text-sm); }
+  .btn--md  { padding: var(--sp-3) var(--sp-6); font-size: var(--text-base); }
+  .btn--lg  { padding: var(--sp-4) var(--sp-8); font-size: var(--text-lg); }
+
+  .btn--primary {
+    background: var(--verde);
+    color: var(--crema);
+  }
+  .btn--primary:hover {
+    background: var(--oliva);
+    transform: translateY(-1px);
+  }
+
+  .btn--outline {
+    background: transparent;
+    border: 1.5px solid var(--oliva);
+    color: var(--oliva);
+  }
+  .btn--outline:hover {
+    background: var(--oliva);
+    color: var(--crema);
+  }
+
+  .btn--ghost {
+    background: transparent;
+    color: var(--oliva);
+  }
+  .btn--ghost:hover {
+    background: var(--crema-oscura);
+  }
+</style>
