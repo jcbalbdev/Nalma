@@ -48,7 +48,7 @@ const WA_NUMBER = '51999999999';
   var cdBody    = document.getElementById('cd-body');
   var cdFoot    = document.getElementById('cd-foot');
   var cdCount   = document.getElementById('cd-count');
-  var WA_NUMBER = cdDrawer ? cdDrawer.dataset.wa : '';
+  var CD_WA = cdDrawer ? cdDrawer.dataset.wa : '';
 
   function openCart() {
     renderCart(); // siempre re-renderiza al abrir
@@ -156,7 +156,7 @@ const WA_NUMBER = '51999999999';
 
     // Render footer
     var waMsg  = buildWaCartMessage(items, total);
-    var waHref = 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(waMsg);
+    var waHref = 'https://wa.me/' + CD_WA + '?text=' + encodeURIComponent(waMsg);
 
     cdFoot.innerHTML =
       '<div class="cd__total-row">' +
