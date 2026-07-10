@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import ProductModal from '../components/ui/ProductModal.astro';
+import CartDrawer from '../components/ui/CartDrawer.astro';
 
 interface Props {
   title?: string;
@@ -32,7 +33,64 @@ const {
     />
   </head>
   <body>
+    <!-- Cart store — must run before any other script uses it -->
+    <script is:inline>
+      window.NALMA_CART = {
+        _WA: '51999999999', // ⚠️ Reemplaza con el número real
+        _DM: 3,             // Mínimo para descuento
+        _DR: 0.10,          // 10% de descuento
+        items: [],
+
+        _recalc: function(item) {
+          var sub = item.unitPrice * item.qty;
+          item.hasDiscount = item.qty >= this._DM;
+          item.total = item.hasDiscount ? Math.round(sub * (1 - this._DR) * 100) / 100 : sub;
+          item.saved = item.hasDiscount ? Math.round((sub - item.total) * 100) / 100 : 0;
+        },
+
+        add: function(item) {
+          var ex = this.items.find(function(i) { return i.id === item.id; });
+          if (ex) {
+            ex.qty += item.qty;
+            this._recalc(ex);
+          } else {
+            var copy = Object.assign({}, item);
+            this._recalc(copy);
+            this.items.push(copy);
+          }
+          this._notify();
+        },
+
+        remove: function(id) {
+          this.items = this.items.filter(function(i) { return i.id !== id; });
+          this._notify();
+        },
+
+        updateQty: function(id, qty) {
+          if (qty <= 0) { this.remove(id); return; }
+          var item = this.items.find(function(i) { return i.id === id; });
+          if (!item) return;
+          item.qty = qty;
+          this._recalc(item);
+          this._notify();
+        },
+
+        count: function() {
+          return this.items.reduce(function(s, i) { return s + i.qty; }, 0);
+        },
+
+        grandTotal: function() {
+          return Math.round(this.items.reduce(function(s, i) { return s + i.total; }, 0) * 100) / 100;
+        },
+
+        _notify: function() {
+          window.dispatchEvent(new CustomEvent('nalma:cart:changed'));
+        }
+      };
+    </script>
+
     <slot />
     <ProductModal />
+    <CartDrawer />
   </body>
 </html>

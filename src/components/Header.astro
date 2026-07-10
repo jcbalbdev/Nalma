@@ -18,13 +18,36 @@ const navLinks = [
       <ul class="header__list">
         {navLinks.map(link => (
           <li>
-            <a href={link.href} class="header__link">{link.label}</a>
+            <a href={link.href} class="header__link">{link.href === '#todo' ? <strong>{link.label}</strong> : link.label}</a>
           </li>
         ))}
       </ul>
     </nav>
 
     <div class="header__actions">
+      <!-- Lupa — navega a la sección de productos -->
+      <a href="#todo" class="header__icon-btn" aria-label="Ver productos">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="1.8"
+             stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="M21 21l-4.35-4.35"/>
+        </svg>
+      </a>
+
+      <!-- Carrito -->
+      <button class="header__icon-btn header__cart-btn" id="cart-btn" aria-label="Ver carrito">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="1.8"
+             stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 01-8 0"/>
+        </svg>
+        <span class="header__cart-badge" id="cart-badge" aria-live="polite" hidden>0</span>
+      </button>
+
+      <!-- Hamburguesa (mobile) -->
       <button class="header__menu-btn" aria-label="Abrir menú" aria-expanded="false" id="menu-btn">
         <svg class="icon-open" width="22" height="22" viewBox="0 0 24 24" fill="none"
              stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
@@ -108,10 +131,54 @@ const navLinks = [
   .header__actions {
     display: flex;
     align-items: center;
-    gap: var(--sp-2);
+    gap: var(--sp-1);
     flex-shrink: 0;
   }
 
+  .header__icon-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    color: var(--oliva);
+    transition: background var(--ease);
+    text-decoration: none;
+  }
+
+  .header__icon-btn:hover { background: var(--crema-oscura); }
+
+  /* Cart badge */
+  .header__cart-badge {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    min-width: 18px;
+    height: 18px;
+    border-radius: var(--radius-full);
+    background: var(--oliva);
+    color: var(--crema);
+    font-size: 10px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    border: 2px solid var(--crema);
+    line-height: 1;
+  }
+
+  @keyframes cart-pop {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.4); }
+    100% { transform: scale(1); }
+  }
+
+  .header__cart-badge.popping { animation: cart-pop 0.3s ease; }
+
+  /* Hamburger */
   .header__menu-btn {
     display: none;
     align-items: center;
@@ -126,19 +193,18 @@ const navLinks = [
   .header__menu-btn:hover { background: var(--crema-oscura); }
 
   .icon-close { display: none; }
-
   .header__menu-btn.is-open .icon-open  { display: none; }
   .header__menu-btn.is-open .icon-close { display: block; }
 
-  /* Mobile dropdown */
+  /* Mobile nav dropdown */
   .header__mobile-nav {
     display: none;
     flex-direction: column;
     background: rgba(245, 240, 230, 0.98);
     border-top: 1px solid var(--crema-oscura);
     padding: var(--sp-4) 0;
-    overflow: hidden;
     max-height: 0;
+    overflow: hidden;
     transition: max-height 0.3s ease;
   }
 
@@ -147,10 +213,7 @@ const navLinks = [
     max-height: 400px;
   }
 
-  .header__mobile-list {
-    display: flex;
-    flex-direction: column;
-  }
+  .header__mobile-list { display: flex; flex-direction: column; }
 
   .header__mobile-link {
     display: block;
@@ -173,23 +236,47 @@ const navLinks = [
   }
 </style>
 
-<script>
-  const btn = document.getElementById('menu-btn');
-  const nav = document.getElementById('mobile-nav');
+<script is:inline>
+  // ── Mobile menu ──
+  var menuBtn = document.getElementById('menu-btn');
+  var mobileNav = document.getElementById('mobile-nav');
 
-  btn?.addEventListener('click', () => {
-    const isOpen = btn.classList.toggle('is-open');
-    btn.setAttribute('aria-expanded', String(isOpen));
-    nav?.classList.toggle('is-open', isOpen);
-    nav?.setAttribute('aria-hidden', String(!isOpen));
+  menuBtn && menuBtn.addEventListener('click', function() {
+    var isOpen = menuBtn.classList.toggle('is-open');
+    menuBtn.setAttribute('aria-expanded', String(isOpen));
+    mobileNav && mobileNav.classList.toggle('is-open', isOpen);
+    mobileNav && mobileNav.setAttribute('aria-hidden', String(!isOpen));
   });
 
-  nav?.querySelectorAll('.header__mobile-link').forEach(link => {
-    link.addEventListener('click', () => {
-      btn?.classList.remove('is-open');
-      btn?.setAttribute('aria-expanded', 'false');
-      nav.classList.remove('is-open');
-      nav.setAttribute('aria-hidden', 'true');
+  mobileNav && mobileNav.querySelectorAll('.header__mobile-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      menuBtn && menuBtn.classList.remove('is-open');
+      menuBtn && menuBtn.setAttribute('aria-expanded', 'false');
+      mobileNav.classList.remove('is-open');
+      mobileNav.setAttribute('aria-hidden', 'true');
     });
+  });
+
+  // ── Cart badge ──
+  var cartBtn   = document.getElementById('cart-btn');
+  var cartBadge = document.getElementById('cart-badge');
+
+  function updateCartBadge() {
+    var count = window.NALMA_CART ? window.NALMA_CART.count() : 0;
+    if (cartBadge) {
+      cartBadge.textContent = String(count);
+      cartBadge.hidden = count === 0;
+      if (count > 0) {
+        cartBadge.classList.remove('popping');
+        void cartBadge.offsetWidth; // reflow for animation reset
+        cartBadge.classList.add('popping');
+      }
+    }
+  }
+
+  window.addEventListener('nalma:cart:changed', updateCartBadge);
+
+  cartBtn && cartBtn.addEventListener('click', function() {
+    window.dispatchEvent(new CustomEvent('nalma:cart:open'));
   });
 </script>

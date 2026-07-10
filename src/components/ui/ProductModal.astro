@@ -68,6 +68,17 @@ const DISCOUNT_RATE  = 0.10; // 10% de descuento
         <span class="pm__savings" id="pm-savings"></span>
       </div>
 
+      <!-- Agregar al carrito -->
+      <button class="pm__add-cart" id="pm-add-cart">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 01-8 0"/>
+        </svg>
+        Agregar al carrito y seguir comprando
+      </button>
+
       <!-- CTA WhatsApp -->
       <a class="pm__cta" id="pm-cta" href="#" target="_blank" rel="noopener noreferrer">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -220,6 +231,23 @@ const DISCOUNT_RATE  = 0.10; // 10% de descuento
       openModal(Number(card.dataset.productId), card);
     }
     if (e.key === 'Escape' && backdrop.classList.contains('is-open')) closeModal();
+  });
+
+  // Agregar al carrito
+  var addCartBtn = document.getElementById('pm-add-cart');
+  addCartBtn && addCartBtn.addEventListener('click', function() {
+    if (!current) return;
+    var price = calc(current.price, qty);
+    window.NALMA_CART && window.NALMA_CART.add({
+      id:          current.id,
+      name:        current.name,
+      size:        current.size,
+      category:    current.category,
+      subcategory: current.subcategory || '',
+      unitPrice:   current.price,
+      qty:         qty,
+    });
+    closeModal();
   });
 
   closeBtn?.addEventListener('click', closeModal);
@@ -490,6 +518,31 @@ const DISCOUNT_RATE  = 0.10; // 10% de descuento
     border-radius: var(--radius-full);
     white-space: nowrap;
     align-items: center;
+  }
+
+  /* Agregar al carrito */
+  .pm__add-cart {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--sp-3);
+    background: var(--crema);
+    border: 1.5px solid var(--oliva);
+    color: var(--oliva);
+    font-weight: 600;
+    font-size: var(--text-base);
+    padding: var(--sp-4) var(--sp-6);
+    border-radius: var(--radius-full);
+    transition: background var(--ease), color var(--ease), transform var(--ease);
+    margin-top: var(--sp-2);
+    width: 100%;
+    cursor: pointer;
+  }
+
+  .pm__add-cart:hover {
+    background: var(--oliva);
+    color: var(--crema);
+    transform: translateY(-1px);
   }
 
   /* CTA */
