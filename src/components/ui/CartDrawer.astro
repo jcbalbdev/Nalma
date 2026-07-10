@@ -110,10 +110,18 @@ const WA_NUMBER = '51999999999';
     if (items.length === 0) {
       cdBody.innerHTML =
         '<div class="cd__empty">' +
-          '<div class="cd__empty-icon">🛍️</div>' +
-          '<p class="cd__empty-title">Tu carrito está vacío</p>' +
-          '<p class="cd__empty-sub">Explora los productos y agrega los que más te gusten.</p>' +
-          '<a href="#todo" class="cd__empty-cta" onclick="closeCart()">Ver productos</a>' +
+          '<div class="cd__empty-icon">' +
+            '<svg width="72" height="72" viewBox="0 0 72 72" fill="none" aria-hidden="true">' +
+              '<circle cx="36" cy="36" r="36" fill="#EDE9DB"/>' +
+              '<path d="M22 30h28l-3.5 22h-21L22 30z" stroke="#696754" stroke-width="1.8" stroke-linejoin="round" fill="#F5F0E6"/>' +
+              '<path d="M28 30v-5a8 8 0 0 1 16 0v5" stroke="#696754" stroke-width="1.8" stroke-linecap="round" fill="none"/>' +
+              '<circle cx="30" cy="42" r="1.5" fill="#696754"/>' +
+              '<circle cx="42" cy="42" r="1.5" fill="#696754"/>' +
+            '</svg>' +
+          '</div>' +
+          '<p class="cd__empty-title" style="font-family:\'Playfair Display\',serif;font-weight:500;font-size:1.25rem;color:#1c1c1a;margin-top:8px;text-align:center">Tu carrito está vacío</p>' +
+          '<p class="cd__empty-sub">Agrega productos y pide todo junto por WhatsApp.</p>' +
+          '<a href="#todo" class="cd__empty-cta" onclick="window.closeCart && closeCart()">Ver productos</a>' +
         '</div>';
       cdFoot.innerHTML = '';
       return;
@@ -302,7 +310,7 @@ const WA_NUMBER = '51999999999';
     text-align: center;
     gap: 12px;
   }
-  .cd__empty-icon { font-size: 3rem; line-height: 1; }
+  .cd__empty-icon { line-height: 1; display: flex; justify-content: center; }
   .cd__empty-title {
     font-family: var(--font-heading);
     font-size: 1.2rem;
