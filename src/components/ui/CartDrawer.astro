@@ -51,6 +51,7 @@ const WA_NUMBER = '51999999999';
   var WA_NUMBER = cdDrawer ? cdDrawer.dataset.wa : '';
 
   function openCart() {
+    renderCart(); // siempre re-renderiza al abrir
     cdDrawer.setAttribute('aria-hidden', 'false');
     cdDrawer.classList.add('is-open');
     cdOverlay.classList.add('is-open');
@@ -64,6 +65,7 @@ const WA_NUMBER = '51999999999';
     cdOverlay.classList.remove('is-open');
     document.body.style.overflow = '';
   }
+  window.closeCart = closeCart; // necesario para onclick en innerHTML
 
   function fmt(n) {
     return 'S/' + (Number.isInteger(n) ? n : n.toFixed(2));
