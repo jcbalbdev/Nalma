@@ -73,15 +73,10 @@ const WA_NUMBER = '51999999999';
   }
 
   var catLabel = { bebe: 'Para bebé', mama: 'Para mamá', todo: 'Para todo' };
-  var catColors = {
-    bebe: 'background:var(--amarillo);color:var(--oliva)',
-    mama: 'background:var(--rosa);color:var(--oliva)',
-    todo: 'background:var(--verde);color:var(--crema)',
-  };
-  var dotColors = {
-    bebe: 'var(--amarillo)',
-    mama: 'var(--rosa)',
-    todo: 'var(--verde)',
+  var thumbBg = {
+    bebe: '#ECE17A',
+    mama: '#F2C4C4',
+    todo: '#B8D4B0',
   };
 
   function buildWaCartMessage(items, total) {
@@ -125,30 +120,32 @@ const WA_NUMBER = '51999999999';
     }
 
     // Render items
+    var blobSvg =
+      '<svg width="40" height="52" viewBox="0 0 60 76" fill="none" aria-hidden="true">' +
+        '<ellipse cx="30" cy="44" rx="22" ry="30" fill="rgba(255,255,255,0.38)"/>' +
+        '<ellipse cx="30" cy="18" rx="10" ry="13" fill="rgba(255,255,255,0.25)"/>' +
+      '</svg>';
+
     var html = '<ul class="cd__list">';
     items.forEach(function(item) {
-      var badge  = item.subcategory || catLabel[item.category] || '';
-      var dot    = dotColors[item.category] || 'var(--crema-oscura)';
-      var bStyle = catColors[item.category] || '';
+      var bg   = thumbBg[item.category] || '#E8E4D8';
+      var meta = (item.subcategory || catLabel[item.category] || '') + ' · ' + item.size;
 
       html +=
         '<li class="cd__item" data-id="' + item.id + '">' +
-          '<div class="cd__item-dot" style="background:' + dot + '" aria-hidden="true"></div>' +
-          '<div class="cd__item-info">' +
+          '<div class="cd__thumb" style="background:' + bg + '" aria-hidden="true">' + blobSvg + '</div>' +
+          '<div class="cd__item-body">' +
+            '<button class="cd__item-remove" data-id="' + item.id + '" aria-label="Eliminar ' + item.name + '">×</button>' +
             '<p class="cd__item-name">' + item.name + '</p>' +
-            '<p class="cd__item-size">' + item.size + '</p>' +
-            '<span class="cd__item-badge" style="' + bStyle + '">' + badge + '</span>' +
-          '</div>' +
-          '<div class="cd__item-controls">' +
+            '<p class="cd__item-meta">' + meta + '</p>' +
+            '<p class="cd__item-price' + (item.hasDiscount ? ' has-discount' : '') + '">' + fmt(item.total) + '</p>' +
+            (item.hasDiscount ? '<p class="cd__item-saved">Ahorras ' + fmt(item.saved) + '</p>' : '') +
             '<div class="cd__qty">' +
               '<button class="cd__qty-btn" data-action="minus" data-id="' + item.id + '" aria-label="Restar">−</button>' +
               '<span class="cd__qty-val">' + item.qty + '</span>' +
-              '<button class="cd__qty-btn" data-action="plus" data-id="' + item.id + '" aria-label="Sumar">+</button>' +
+              '<button class="cd__qty-btn cd__qty-plus" data-action="plus" data-id="' + item.id + '" aria-label="Sumar">+</button>' +
             '</div>' +
-            '<p class="cd__item-price' + (item.hasDiscount ? ' has-discount' : '') + '">' + fmt(item.total) + '</p>' +
-            (item.hasDiscount ? '<p class="cd__item-saved">−' + fmt(item.saved) + '</p>' : '') +
           '</div>' +
-          '<button class="cd__item-remove" data-id="' + item.id + '" aria-label="Eliminar ' + item.name + '">×</button>' +
         '</li>';
     });
     html += '</ul>';
@@ -334,122 +331,114 @@ const WA_NUMBER = '51999999999';
 
   .cd__item {
     display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 14px 40px 14px 16px;
+    align-items: stretch;
+    gap: 14px;
+    padding: 14px;
     background: #fff;
     border: 1px solid var(--crema-oscura);
-    border-radius: 14px;
-    transition: box-shadow var(--ease);
+    border-radius: 16px;
     position: relative;
+    transition: box-shadow var(--ease);
   }
-  .cd__item:hover { box-shadow: 0 2px 12px rgba(60,58,40,0.07); }
+  .cd__item:hover { box-shadow: 0 2px 14px rgba(60,58,40,0.08); }
 
-  /* color dot */
-  .cd__item-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
+  /* thumbnail */
+  .cd__thumb {
+    width: 76px;
+    min-height: 76px;
+    border-radius: 10px;
     flex-shrink: 0;
-    margin-top: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
   }
 
-  /* name / size / badge */
-  .cd__item-info {
+  /* content column */
+  .cd__item-body {
     flex: 1;
     min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    padding-right: 20px;
   }
   .cd__item-name {
     font-size: 0.9rem;
     font-weight: 600;
     color: var(--negro);
     line-height: 1.3;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    margin-bottom: 2px;
   }
-  .cd__item-size {
-    font-size: 0.775rem;
+  .cd__item-meta {
+    font-size: 0.75rem;
     color: var(--gris-medio);
+    margin-bottom: 6px;
   }
-  .cd__item-badge {
-    display: inline-block;
-    border-radius: 99px;
-    font-size: 9px;
+  .cd__item-price {
+    font-size: 1rem;
     font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 2px 8px;
+    color: var(--negro);
+    margin-bottom: 4px;
+  }
+  .cd__item-price.has-discount { color: var(--negro); }
+  .cd__item-saved {
+    font-size: 0.7rem;
+    color: #1a9e52;
+    font-weight: 600;
+    background: #e8f7ee;
+    border-radius: 99px;
+    padding: 2px 7px;
     align-self: flex-start;
-    margin-top: 4px;
+    margin-bottom: 6px;
   }
 
-  /* qty + price column */
-  .cd__item-controls {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 6px;
-    flex-shrink: 0;
-  }
+  /* qty stepper */
   .cd__qty {
     display: flex;
     align-items: center;
-    gap: 4px;
-    background: var(--crema);
-    border: 1px solid var(--crema-oscura);
-    border-radius: 99px;
-    padding: 3px 6px;
+    gap: 10px;
+    margin-top: auto;
+    padding-top: 8px;
   }
   .cd__qty-btn {
-    width: 22px;
-    height: 22px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
-    font-size: 1rem;
-    font-weight: 500;
-    color: var(--oliva);
+    border: 1.5px solid var(--crema-oscura);
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background var(--ease);
-    line-height: 1;
+    color: var(--oliva);
+    font-size: 1.1rem;
     cursor: pointer;
+    transition: border-color var(--ease), background var(--ease);
+    line-height: 1;
+    flex-shrink: 0;
   }
-  .cd__qty-btn:hover { background: var(--crema-oscura); }
+  .cd__qty-btn:hover { border-color: var(--oliva); }
+  .cd__qty-plus {
+    background: var(--oliva);
+    color: var(--crema);
+    border-color: var(--oliva);
+  }
+  .cd__qty-plus:hover { background: #4a4a30; border-color: #4a4a30; }
   .cd__qty-val {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     font-weight: 700;
     color: var(--negro);
     min-width: 18px;
     text-align: center;
   }
-  .cd__item-price {
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: var(--oliva);
-  }
-  .cd__item-price.has-discount { color: var(--negro); }
-  .cd__item-saved {
-    font-size: 0.72rem;
-    color: #1e9e52;
-    font-weight: 600;
-    background: #e6f7ed;
-    border-radius: 99px;
-    padding: 1px 6px;
-  }
 
   /* remove button */
   .cd__item-remove {
     position: absolute;
-    top: 14px;
+    top: 10px;
     right: 10px;
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
-    font-size: 1rem;
+    font-size: 0.95rem;
     color: var(--gris-medio);
     display: flex;
     align-items: center;
