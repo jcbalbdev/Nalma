@@ -1,0 +1,540 @@
+---
+import { products } from '../../data/products';
+
+// ⚠️ Reemplaza con el número real de WhatsApp de la marca (código de país + número, sin +)
+const WA_NUMBER      = '51999999999';
+const DISCOUNT_MIN   = 3;    // Unidades mínimas para activar el descuento
+const DISCOUNT_RATE  = 0.10; // 10% de descuento
+---
+
+<div
+  class="pm-backdrop"
+  id="pm-backdrop"
+  aria-hidden="true"
+  data-products={JSON.stringify(products)}
+  data-wa={WA_NUMBER}
+  data-discount-min={String(DISCOUNT_MIN)}
+  data-discount-rate={String(DISCOUNT_RATE)}
+>
+  <div class="pm" id="pm" role="dialog" aria-modal="true" aria-labelledby="pm-name">
+
+    <!-- Panel visual (izquierda / arriba) -->
+    <div class="pm__visual" id="pm-visual">
+      <div class="pm__blob" id="pm-blob" aria-hidden="true"></div>
+      <span class="pm__new" id="pm-new">Nuevo</span>
+      <div class="pm__visual-foot">
+        <span class="pm__brand">NALMA</span>
+        <span class="pm__num" id="pm-num"></span>
+      </div>
+    </div>
+
+    <!-- Panel de contenido (derecha / abajo) -->
+    <div class="pm__content">
+      <button class="pm__close" id="pm-close" aria-label="Cerrar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <line x1="5" y1="5" x2="19" y2="19"/>
+          <line x1="19" y1="5" x2="5" y2="19"/>
+        </svg>
+      </button>
+
+      <span class="pm__badge" id="pm-badge"></span>
+      <h2 class="pm__name" id="pm-name"></h2>
+      <p class="pm__desc" id="pm-desc"></p>
+      <p class="pm__size" id="pm-size"></p>
+
+      <div class="pm__divider"></div>
+
+      <!-- Selector de cantidad -->
+      <div class="pm__qty-section">
+        <p class="pm__section-label">¿Cuántas unidades quieres?</p>
+        <div class="pm__qty-row">
+          <button class="pm__qty-btn" id="pm-minus" aria-label="Restar una unidad">−</button>
+          <output class="pm__qty-val" id="pm-qty" aria-live="polite">1</output>
+          <button class="pm__qty-btn" id="pm-plus" aria-label="Agregar una unidad">+</button>
+        </div>
+        <p class="pm__discount-tip" id="pm-discount-tip"></p>
+      </div>
+
+      <!-- Precio total -->
+      <div class="pm__price-wrap">
+        <div>
+          <span class="pm__section-label">Total a pagar</span>
+          <div class="pm__price-row">
+            <span class="pm__price-old" id="pm-price-old"></span>
+            <span class="pm__price" id="pm-price"></span>
+          </div>
+        </div>
+        <span class="pm__savings" id="pm-savings"></span>
+      </div>
+
+      <!-- CTA WhatsApp -->
+      <a class="pm__cta" id="pm-cta" href="#" target="_blank" rel="noopener noreferrer">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+        Hacer pedido por WhatsApp
+      </a>
+      <p class="pm__note">Tu pedido se abrirá en WhatsApp listo para enviar.</p>
+    </div>
+
+  </div>
+</div>
+
+<script is:inline>
+  const backdrop    = document.getElementById('pm-backdrop');
+  const closeBtn    = document.getElementById('pm-close');
+  const minusBtn    = document.getElementById('pm-minus');
+  const plusBtn     = document.getElementById('pm-plus');
+  const el = (id) => document.getElementById(id);
+
+  const products     = JSON.parse(backdrop?.dataset.products || '[]');
+  const WA_NUMBER    = backdrop?.dataset.wa || '';
+  const DISCOUNT_MIN = Number(backdrop?.dataset.discountMin || 3);
+  const DISCOUNT_RATE = Number(backdrop?.dataset.discountRate || 0.1);
+
+  let current     = null;
+  let qty         = 1;
+  let lastTrigger = null;
+
+  const categoryLabel = { bebe: 'Para bebé', mama: 'Para mamá', todo: 'Para todo' };
+  const bgColors      = { bebe: 'var(--amarillo-claro)', mama: 'var(--rosa-claro)' };
+  const blobGradients = {
+    bebe: 'radial-gradient(circle at 42% 38%, #FAFBA8 0%, var(--amarillo) 58%, transparent 80%)',
+    mama: 'radial-gradient(circle at 42% 38%, #FDE8E4 0%, var(--rosa) 58%, transparent 80%)',
+  };
+  const badgeStyle = {
+    bebe: 'background:var(--amarillo);color:var(--oliva)',
+    mama: 'background:var(--rosa);color:var(--oliva)',
+    todo: 'background:var(--verde);color:var(--crema)',
+  };
+
+  function fmt(n) {
+    return 'S/' + (Number.isInteger(n) ? n : n.toFixed(2));
+  }
+
+  function calc(unitPrice, quantity) {
+    const subtotal    = unitPrice * quantity;
+    const hasDiscount = quantity >= DISCOUNT_MIN;
+    const total       = hasDiscount ? Math.round(subtotal * (1 - DISCOUNT_RATE) * 100) / 100 : subtotal;
+    const saved       = hasDiscount ? Math.round((subtotal - total) * 100) / 100 : 0;
+    return { subtotal, total, saved, hasDiscount };
+  }
+
+  function buildMessage(product, quantity, price) {
+    const badge = product.subcategory || categoryLabel[product.category] || '';
+    let msg = `Hola! Me gustaría hacer el siguiente pedido:\n\n`;
+    msg += `🧴 *${product.name}* (${product.size})\n`;
+    msg += `🏷️ ${badge}\n`;
+    msg += `📦 Cantidad: ${quantity} unidad${quantity > 1 ? 'es' : ''}\n`;
+    msg += `💰 Precio por unidad: ${fmt(product.price)}\n`;
+    if (price.hasDiscount) {
+      msg += `✨ Descuento: ${Math.round(DISCOUNT_RATE * 100)}% por llevar ${quantity} unidades\n`;
+      msg += `💵 Total: ${fmt(price.total)} _(antes ${fmt(price.subtotal)})_\n`;
+    } else {
+      msg += `💵 Total: ${fmt(price.total)}\n`;
+    }
+    msg += `\n¿Pueden confirmar disponibilidad y coordinar el envío? ¡Gracias!`;
+    return msg;
+  }
+
+  function updateUI() {
+    if (!current) return;
+    const price = calc(current.price, qty);
+
+    el('pm-qty').textContent = qty;
+    minusBtn.disabled = qty <= 1;
+
+    el('pm-price').textContent = fmt(price.total);
+
+    const oldEl   = el('pm-price-old');
+    const savings = el('pm-savings');
+    const tip     = el('pm-discount-tip');
+
+    if (price.hasDiscount) {
+      oldEl.textContent  = fmt(price.subtotal);
+      oldEl.style.display = 'inline';
+      savings.textContent = `¡Ahorras ${fmt(price.saved)}!`;
+      savings.style.display = 'inline-flex';
+      tip.textContent = '';
+    } else {
+      oldEl.style.display   = 'none';
+      savings.style.display = 'none';
+      const remaining = DISCOUNT_MIN - qty;
+      tip.textContent = `Agrega ${remaining} unidad${remaining > 1 ? 'es' : ''} más y obtén ${Math.round(DISCOUNT_RATE * 100)}% de descuento`;
+    }
+
+    const msg = buildMessage(current, qty, price);
+    el('pm-cta').href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+  }
+
+  function openModal(productId, triggerEl) {
+    current = products.find(p => p.id === productId);
+    if (!current) return;
+    qty         = 1;
+    lastTrigger = triggerEl;
+
+    el('pm-visual').style.background = bgColors[current.category] || 'var(--crema)';
+    el('pm-blob').style.background   = blobGradients[current.category] || '';
+    el('pm-num').textContent          = current.num;
+    el('pm-name').textContent         = current.name;
+    el('pm-desc').textContent         = current.description;
+    el('pm-size').textContent         = current.size;
+
+    const newEl = el('pm-new');
+    newEl.style.display = current.isNew ? 'inline-flex' : 'none';
+
+    const badgeEl = el('pm-badge');
+    badgeEl.textContent  = current.subcategory || categoryLabel[current.category] || '';
+    badgeEl.style.cssText = badgeStyle[current.category] || '';
+
+    updateUI();
+
+    backdrop.setAttribute('aria-hidden', 'false');
+    backdrop.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+
+    setTimeout(() => closeBtn?.focus(), 80);
+  }
+
+  function closeModal() {
+    backdrop.classList.remove('is-open');
+    backdrop.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    lastTrigger?.focus();
+    lastTrigger = null;
+    current     = null;
+  }
+
+  // Click en cualquier card
+  document.addEventListener('click', e => {
+    const card = e.target.closest('[data-product-id]');
+    if (card) openModal(Number(card.dataset.productId), card);
+  });
+
+  // Teclado en cards
+  document.addEventListener('keydown', e => {
+    const card = e.target.closest('[data-product-id]');
+    if (card && (e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault();
+      openModal(Number(card.dataset.productId), card);
+    }
+    if (e.key === 'Escape' && backdrop.classList.contains('is-open')) closeModal();
+  });
+
+  closeBtn?.addEventListener('click', closeModal);
+  backdrop?.addEventListener('click', e => { if (e.target === backdrop) closeModal(); });
+
+  minusBtn?.addEventListener('click', () => { if (qty > 1) { qty--; updateUI(); } });
+  plusBtn?.addEventListener('click',  () => { qty++; updateUI(); });
+</script>
+
+<style>
+  /* Backdrop */
+  .pm-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(28, 28, 26, 0.55);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--sp-4);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+
+  .pm-backdrop.is-open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  /* Modal */
+  .pm {
+    background: var(--blanco);
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 860px;
+    max-height: 90vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    overflow: hidden;
+    transform: translateY(24px) scale(0.97);
+    transition: transform 0.28s ease;
+  }
+
+  .pm-backdrop.is-open .pm {
+    transform: translateY(0) scale(1);
+  }
+
+  /* Visual panel */
+  .pm__visual {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 340px;
+    padding: var(--sp-6);
+  }
+
+  .pm__blob {
+    width: 58%;
+    height: 64%;
+    border-radius: 44% 56% 40% 60% / 68% 32% 68% 32%;
+  }
+
+  .pm__new {
+    position: absolute;
+    top: var(--sp-4);
+    left: var(--sp-4);
+    background: var(--oliva);
+    color: var(--crema);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    padding: var(--sp-1) var(--sp-3);
+    border-radius: var(--radius-full);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    display: none;
+  }
+
+  .pm__visual-foot {
+    position: absolute;
+    bottom: var(--sp-4);
+    left: var(--sp-5);
+    right: var(--sp-5);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .pm__brand {
+    font-family: var(--font-logo);
+    font-weight: 900;
+    font-size: var(--text-2xl);
+    color: var(--oliva);
+  }
+
+  .pm__num {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    color: var(--oliva);
+    opacity: 0.45;
+    letter-spacing: 0.05em;
+  }
+
+  /* Content panel */
+  .pm__content {
+    position: relative;
+    padding: var(--sp-8) var(--sp-8) var(--sp-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+    overflow-y: auto;
+  }
+
+  .pm__close {
+    position: absolute;
+    top: var(--sp-4);
+    right: var(--sp-4);
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--oliva);
+    transition: background var(--ease);
+  }
+
+  .pm__close:hover { background: var(--crema-oscura); }
+
+  .pm__badge {
+    display: inline-block;
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: var(--sp-1) var(--sp-3);
+    align-self: flex-start;
+    margin-top: var(--sp-2);
+  }
+
+  .pm__name {
+    font-family: var(--font-heading);
+    font-size: var(--text-2xl);
+    font-weight: 500;
+    color: var(--negro);
+    line-height: 1.25;
+  }
+
+  .pm__desc {
+    font-size: var(--text-sm);
+    color: var(--gris-medio);
+    line-height: 1.6;
+  }
+
+  .pm__size {
+    font-size: var(--text-sm);
+    color: var(--oliva-medio);
+    font-weight: 500;
+  }
+
+  .pm__divider {
+    height: 1px;
+    background: var(--crema-oscura);
+    margin: var(--sp-1) 0;
+  }
+
+  /* Quantity */
+  .pm__section-label {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--oliva-medio);
+    margin-bottom: var(--sp-2);
+  }
+
+  .pm__qty-section { display: flex; flex-direction: column; }
+
+  .pm__qty-row {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+    margin-bottom: var(--sp-2);
+  }
+
+  .pm__qty-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    border: 1.5px solid var(--crema-oscura);
+    font-size: var(--text-xl);
+    font-weight: 300;
+    color: var(--oliva);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--ease), border-color var(--ease);
+    line-height: 1;
+  }
+
+  .pm__qty-btn:hover:not(:disabled) {
+    background: var(--crema);
+    border-color: var(--oliva);
+  }
+
+  .pm__qty-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .pm__qty-val {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--negro);
+    min-width: 2ch;
+    text-align: center;
+    font-family: var(--font-logo);
+  }
+
+  .pm__discount-tip {
+    font-size: var(--text-xs);
+    color: var(--oliva-medio);
+    min-height: 1.2em;
+  }
+
+  /* Price */
+  .pm__price-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-4);
+    background: var(--crema);
+    border-radius: var(--radius-md);
+    padding: var(--sp-4) var(--sp-5);
+  }
+
+  .pm__price-row {
+    display: flex;
+    align-items: baseline;
+    gap: var(--sp-2);
+    margin-top: var(--sp-1);
+  }
+
+  .pm__price-old {
+    font-size: var(--text-sm);
+    color: var(--gris-medio);
+    text-decoration: line-through;
+    display: none;
+  }
+
+  .pm__price {
+    font-family: var(--font-logo);
+    font-size: var(--text-3xl);
+    font-weight: 900;
+    color: var(--oliva);
+  }
+
+  .pm__savings {
+    display: none;
+    background: var(--verde);
+    color: var(--oliva);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    padding: var(--sp-1) var(--sp-3);
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+    align-items: center;
+  }
+
+  /* CTA */
+  .pm__cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--sp-3);
+    background: #25D366;
+    color: #fff;
+    font-weight: 600;
+    font-size: var(--text-base);
+    padding: var(--sp-4) var(--sp-6);
+    border-radius: var(--radius-full);
+    transition: background var(--ease), transform var(--ease);
+    margin-top: var(--sp-2);
+    text-align: center;
+  }
+
+  .pm__cta:hover {
+    background: #1ebe5d;
+    transform: translateY(-2px);
+  }
+
+  .pm__note {
+    font-size: var(--text-xs);
+    color: var(--gris-medio);
+    text-align: center;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    .pm-backdrop { padding: 0; align-items: flex-end; }
+
+    .pm {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto 1fr;
+      max-height: 95vh;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+
+    .pm__visual { min-height: 200px; }
+
+    .pm__content {
+      padding: var(--sp-6) var(--sp-5) var(--sp-8);
+    }
+  }
+</style>

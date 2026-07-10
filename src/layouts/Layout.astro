@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import ProductModal from '../components/ui/ProductModal.astro';
 
 interface Props {
   title?: string;
@@ -32,5 +33,6 @@ const {
   </head>
   <body>
     <slot />
+    <ProductModal />
   </body>
 </html>

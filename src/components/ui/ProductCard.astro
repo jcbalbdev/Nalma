@@ -19,7 +19,7 @@ const blobColors = {
 };
 ---
 
-<article class="card">
+<article class="card" data-product-id={product.id} role="button" tabindex="0" aria-label={`Ver detalles de ${product.name}`}>
   <div class="card__image" style={`background:${bgColors[product.category]};`}>
     {product.isNew && <span class="card__new">Nuevo</span>}
 
@@ -52,6 +52,8 @@ const blobColors = {
     display: flex;
     flex-direction: column;
     transition: transform var(--ease), box-shadow var(--ease);
+    cursor: pointer;
+    text-align: left;
   }
 
   .card:hover {
