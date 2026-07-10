@@ -65,7 +65,8 @@ const WA_NUMBER = '51999999999';
     cdOverlay.classList.remove('is-open');
     document.body.style.overflow = '';
   }
-  window.closeCart = closeCart; // necesario para onclick en innerHTML
+  window.closeCart   = closeCart;  // necesario para onclick en innerHTML
+  window.openCart    = openCart;   // llamado directamente desde Header
 
   function fmt(n) {
     return 'S/' + (Number.isInteger(n) ? n : n.toFixed(2));
