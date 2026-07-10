@@ -279,7 +279,7 @@ const WA_NUMBER = '51999999999';
     flex: 1;
     overflow-y: auto;
     overscroll-behavior: contain;
-    padding: 8px 0;
+    padding: 16px;
   }
   .cd__body::-webkit-scrollbar { width: 4px; }
   .cd__body::-webkit-scrollbar-track { background: transparent; }
@@ -329,20 +329,21 @@ const WA_NUMBER = '51999999999';
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 0;
+    gap: 10px;
   }
 
   .cd__item {
     display: flex;
     align-items: flex-start;
-    gap: 14px;
-    padding: 16px 40px 16px 24px;
+    gap: 12px;
+    padding: 14px 40px 14px 16px;
     background: #fff;
-    border-bottom: 1px solid var(--crema-oscura);
-    transition: background var(--ease);
+    border: 1px solid var(--crema-oscura);
+    border-radius: 14px;
+    transition: box-shadow var(--ease);
     position: relative;
   }
-  .cd__item:first-child { border-top: 1px solid var(--crema-oscura); }
+  .cd__item:hover { box-shadow: 0 2px 12px rgba(60,58,40,0.07); }
 
   /* color dot */
   .cd__item-dot {
